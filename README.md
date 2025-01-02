@@ -1,14 +1,14 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/j1SuxzcN)
-# Prompt Engineer 作業題目
+# Prompt Engineer Homework Questions
 
-## 作業內容
+## Homework Content
 
-請使用 **LangChain** 套件完成以下作業，並實作提供的方法 `generate_hw01-04(question)`。實作於 **`student_assignment.py`** 中。
-#### 創建 `.env` 文件（供學生使用）
+Please complete the following assignment using the **LangChain** suite and implement the provided method `generate_hw01-04(question)`. Implemented in `student_assignment.py`.
+#### Create `.env` file (for student use)
 
-在此作業中，您將需要在本地開發環境中設置必要的參數來支持程式運行。為了簡化環境變數的管理，請在項目根目錄下創建一個名為 `.env` 的文件，並在其中定義環境變數。
+In this assignment, you will set up the necessary parameters in your local development environment to enable the program to run. To simplify the management of environment variables, create a file named `.env` in the project root directory and define the environment variables in it.
 
-這個 `.env` 文件的主要用途是為了讓您能夠在自己的電腦上進行實作，並為`model_configurations.py`文件提供所需的參數。參加作業時，我們會提供具體的參數值供您填寫。以下是 .env 文件的範例格式：
+The main purpose of this `.env` file is to enable you to implement it on your own computer and provide the required parameters to the `model_configurations.py` file. When taking part in the assignment, we will provide specific parameter values ​​for you to fill in. The following is an example format of a .env file:
 
 
 ```makefile
@@ -17,20 +17,20 @@ AZURE_OPENAI_GPT4O_KEY=your_api_key_here
 AZURE_OPENAI_GPT4O_DEPLOYMENT_CHAT=your_deployment_name_here
 AZURE_OPENAI_GPT4O_VERSION=your_api_version_here
 ```
-#### 注意事項
+#### Things to note
 
-- **請勿將 `.env` 文件上傳到任何版本控制系統（例如 GitHub）**，以避免洩漏敏感資訊。
-- `.env` 文件僅供您在本地環境中使用，不需要提交作業時包含在內。
+- **Do not upload `.env` files to any version control system (such as GitHub)** to avoid leaking sensitive information.
+- The `.env` file is for use in your local environment only and does not need to be included when submitting a job.
 
 ---
 
-### 作業1
+### Assignment 1
 
-1. **問題**：`請回答台灣特定月份的紀念日有哪些(請用JSON格式呈現)?`
-2. **範例**：`2024年台灣10月紀念日有哪些?`
-3. **方法**：實作 `generate_hw01(question)`，用於回答上述問題。
-4. **輸出格式**：
-   - JSON 格式如下：
+1. **Question**: `Please answer what are the anniversaries in specific months in Taiwan (please present it in JSON format)?`
+2. **Example**: `What are the October anniversaries in Taiwan in 2024?`
+3. **Method**: Implement `generate_hw01(question)` to answer the above questions.
+4. **Output format**:
+   - JSON The format is as follows：
      ```json
      {
          "Result": 
@@ -43,20 +43,20 @@ AZURE_OPENAI_GPT4O_VERSION=your_api_version_here
 
 ---
 
-### 作業2
+### Assignment 2
 
-1. **問題**：`請回答台灣特定月份的紀念日有哪些(請用JSON格式呈現)?`
-2. **範例**：`2024年台灣10月紀念日有哪些?`
-3. **方法**：
-   - 使用 Function Calling 的方式查詢指定的 API。
-   - 實作 `generate_hw02(question)`，用於回答上述問題。
-4. **指定 API**：
-   - 使用 [Calendarific API](https://calendarific.com/)。
-   - 步驟：
-     1. 訪問 Calendarific 網站並註冊帳戶。
-     2. 登錄後進入 Dashboard，取得您的 API Key。
-5. **輸出格式**：
-   - JSON 格式如下：
+1. **Question**: `Please answer what are the anniversaries in specific months in Taiwan (please present it in JSON format)?`
+2. **Example**: `What are the October anniversaries in Taiwan in 2024?`
+3. **Method**:
+    - Use Function Calling to query the specified API.
+    - Implement `generate_hw02(question)` to answer the above question.
+4. **Specify API**:
+    - Use [Calendarific API](https://calendarific.com/).
+    - Steps:
+        1. Visit the Calendarific website and register for an account.
+        2. After logging in, enter the Dashboard and obtain your API Key.
+5. **Output format**:
+   - JSON The format is as follows：
      ```json
      {
          "Result": [
@@ -86,57 +86,56 @@ AZURE_OPENAI_GPT4O_VERSION=your_api_version_here
      
 ---
 
-### 作業3
+### Assignment 3
 
-1. **問題**：`根據 作業2 的回答，檢查某個節日是否包含在該月份的節日清單中，並回應是否需要新增該節日`
-2. **範例**：`根據先前的節日清單，這個節日{"date": "10-31", "name": "蔣公誕辰紀念日"}是否有在該月份清單？`
-3. **方法**：
-   - 使用 RunnableWithMessageHistory 的方式記憶前一次的回答。
-   - 實作 `generate_hw03(question2, question3)`，用於回答上述問題。 PS.question2是作業2的問題
-4. **輸出格式**：
-   - add : 這是一個布林值，表示是否需要將節日新增到節日清單中。根據問題判斷該節日是否存在於清單中，如果不存在，則為 true；否則為 false。
-   - reason : 描述為什麼需要或不需要新增節日，具體說明是否該節日已經存在於清單中，以及當前清單的內容。
-   - JSON 格式如下：
-     ```json
-     {
-         "Result": 
-             {
-                 "add": true,
-                 "reason": "蔣中正誕辰紀念日並未包含在十月的節日清單中。目前十月的現有節日包括國慶日、重陽節、華僑節、台灣光復節和萬聖節。因此，如果該日被認定為節日，應該將其新增至清單中。"
-             }
-     }
-     ```
-
----
-
-### 作業4
-
-1. **問題**：`請解析提供的圖片檔案 baseball.png，並回答圖片中有關問題的內容。`
-2. **範例**：`請問中華台北的積分是多少`
-3. **方法**：
-   - 使用提供的圖片檔案 baseball.png 作為輸入數據來源，透過程式實現圖片內容的解析與問題的回答。
-   - 實作 `generate_hw04(question)`，用於回答上述問題。
-4. **輸出格式**：
-   - JSON 格式如下：
-     ```json
-     {
-         "Result": 
-             {
-                 "score": 5498
-             }
-     }
-     ```
+1. **Question**: `Based on the answer to Assignment 2, check whether a certain holiday is included in the holiday list for that month, and respond whether the holiday needs to be added`
+2. **Example**: `According to the previous holiday list, is this holiday {"date": "10-31", "name": "蔣公誕辰紀念日"} included in the list of this month? `
+3. **Method**:
+    - Use RunnableWithMessageHistory to remember the previous answer.
+    - Implement `generate_hw03(question2, question3)` to answer the above questions. PS.question2 is a question from homework 2
+4. **Output format**:
+    - add: This is a **Boolean** value indicating whether the festival needs to be added to the festival list. Determine whether the holiday exists in the list according to the question. If it does not exist, it is true; otherwise, it is false.
+    - reason: Describe why the new holiday is needed or not, specify whether the holiday already exists in the list, and the contents of the current list.
+    - The JSON format is as follows:
+        ```json
+        {
+            "Result": 
+                {
+                    "add": true,
+                    "reason": "The anniversary of Chiang Kai-shek's birth is not included in the list of October holidays. Existing holidays in October include National Day, Double Ninth Festival, Overseas Chinese Day, Taiwan Liberation Day and Halloween. Therefore, if the day is recognized as a holiday, it should be added to the list."
+                }
+        }
+        ```
 
 ---
 
-### 注意事項
-- 必須使用 **LangChain** 套件完成方法實作。
-- 確保輸出的格式與範例一致。
+### Assignment 4
 
-### 參考來源
-- [作業1](https://python.langchain.com/docs/how_to/few_shot_examples_chat/)
-- [作業2](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.agent.AgentExecutor.html#langchain.agents.agent.AgentExecutor)
-- [作業2](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.openai_functions_agent.base.create_openai_functions_agent.html)
-- [作業3](https://python.langchain.com/docs/how_to/agent_executor/)
-- [作業4](https://learn.microsoft.com/zh-tw/azure/ai-services/openai/how-to/gpt-with-vision?tabs=rest)
+1. **Question**: `Please parse the provided image file baseball.png and answer the relevant questions in the image. `
+2. **Example**: `How many points are there in Chinese Taipei`
+3. **Method**:
+    - Use the provided image file baseball.png as the input data source to analyze the image content and answer questions through the program.
+    - Implement `generate_hw04(question)` to answer the above question.
+4. **Output format**:
+    - The JSON format is as follows:
+        ```json
+        {
+            "Result": 
+                {
+                    "score": 5498
+                }
+        }
+        ```
+
+---
+
+### Notes
+- Method implementation must be done using the **LangChain** package.
+- Make sure the format of the output is consistent with the example.
+### Reference sources
+- [Assignment 1](https://python.langchain.com/docs/how_to/few_shot_examples_chat/)
+- [Job 2](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.agent.AgentExecutor.html#langchain.agents.agent.AgentExecutor)
+- [Assignment 2](https://python.langchain.com/api_reference/langchain/agents/langchain.agents.openai_functions_agent.base.create_openai_functions_agent.html)
+- [Assignment 3](https://python.langchain.com/docs/how_to/agent_executor/)
+- [Assignment 4](https://learn.microsoft.com/zh-tw/azure/ai-services/openai/how-to/gpt-with-vision?tabs=rest)
 
