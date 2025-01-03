@@ -24,7 +24,7 @@ def generate_hw01(question):
             
             # Ensure the result is in the correct format
             if isinstance(parsed_answer, list):
-                return json.dumps({"Result": parsed_answer[0]})
+                return json.dumps({"Result": parsed_answer})
             else:
                 return json.dumps({"error": "Unexpected response format"})
         else:
