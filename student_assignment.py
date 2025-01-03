@@ -11,22 +11,26 @@ gpt_config = get_model_configuration(gpt_chat_version)
 
 
 def generate_hw01(question):
-    prompt = "Please format the result as JSON with Result: { date, name }"
+    prompt = "Please provide the anniversaries in Taiwan for the specified month and year in JSON format with keys 'date' and 'event'. Only return the JSON content."
     answer = demo(question, prompt)
-
-    # Strip the markdown code block and parse the JSON content
-    json_content = answer.content.strip("```json\n").strip("```")
-    parsed_answer = json.loads(json_content)
-
-    # Transform the result from a list to a single object
-    if (
-        "Result" in parsed_answer
-        and isinstance(parsed_answer["Result"], list)
-        and len(parsed_answer["Result"]) > 0
-    ):
-        parsed_answer["Result"] = parsed_answer["Result"][0]
-
-    return parsed_answer
+    
+    try:
+        # Extract JSON content from the response
+        json_start = answer.content.find('```json')
+        json_end = answer.content.rfind('```')
+        if json_start != -1 and json_end != -1:
+            json_content = answer.content[json_start + 7:json_end].strip()
+            parsed_answer = json.loads(json_content)
+            
+            # Ensure the result is in the correct format
+            if isinstance(parsed_answer, list):
+                return json.dumps({"Result": parsed_answer[0]})
+            else:
+                return json.dumps({"error": "Unexpected response format"})
+        else:
+            return json.dumps({"error": "JSON content not found in response"})
+    except Exception as e:
+        return json.dumps({"error": str(e), "traceback": traceback.format_exc()})
 
 
 def generate_hw02(question):
@@ -59,3 +63,16 @@ def demo(question, prompt):
     response = llm.invoke([system_message, human_message])
 
     return response
+
+# Testing
+# 1
+# print(generate_hw01("2024年台灣10月紀念日有哪些?"))
+# 2
+# print(generate_hw02("2024年台灣10月紀念日有哪些"))
+# 3
+# question1 = '2024年台灣10月紀念日有哪些?'
+# question2 = '根據先前的節日清單，這個節日是否有在該月份清單？{"date": "10-31", "name": "蔣公誕辰紀念日"}'
+# print(generate_hw03(question1, question2))
+# 4
+# question = '請問中華台北的積分是多少?'
+# print(generate_hw04(question))
