@@ -17,7 +17,16 @@ def generate_hw01(question):
     # Strip the markdown code block and parse the JSON content
     json_content = answer.content.strip("```json\n").strip("```")
     parsed_answer = json.loads(json_content)
-    print(parsed_answer)
+
+    # Transform the result from a list to a single object
+    if (
+        "Result" in parsed_answer
+        and isinstance(parsed_answer["Result"], list)
+        and len(parsed_answer["Result"]) > 0
+    ):
+        parsed_answer["Result"] = parsed_answer["Result"][0]
+
+    return parsed_answer
 
 
 def generate_hw02(question):
