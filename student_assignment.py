@@ -5,6 +5,10 @@ from model_configurations import get_model_configuration, get_configuration
 
 from langchain_openai import AzureChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.memory import ChatMessageHistory
+from typing import Dict
 
 gpt_chat_version = "gpt-4o"
 gpt_config = get_model_configuration(gpt_chat_version)
@@ -52,7 +56,63 @@ def generate_hw02(question):
 
 
 def generate_hw03(question2, question3):
-    pass
+    hw2_answer = generate_hw02(question2)
+
+    holidays_data = json.loads(hw2_answer)
+    holidays_list = holidays_data.get("Result", [])
+
+    holidays_text = "Here are the holidays list:\n"
+    for holiday in holidays_list:
+        holidays_text += f"- {holiday['date']}: {holiday['name']}\n"
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful assistant. Use the conversation history to provide context-aware responses.",
+            ),
+            ("human", "{input}"),
+        ]
+    )
+
+    llm = AzureChatOpenAI(
+        model=gpt_config["model_name"],
+        deployment_name=gpt_config["deployment_name"],
+        openai_api_key=gpt_config["api_key"],
+        openai_api_version=gpt_config["api_version"],
+        azure_endpoint=gpt_config["api_base"],
+        temperature=gpt_config["temperature"],
+    )
+
+    sessions: Dict[str, ChatMessageHistory] = {}
+
+    def get_session_history(session_id: str) -> ChatMessageHistory:
+        if session_id not in sessions:
+            sessions[session_id] = ChatMessageHistory()
+        return sessions[session_id]
+
+    chain = prompt | llm
+
+    chain_with_history = RunnableWithMessageHistory(
+        chain,
+        get_session_history,
+        input_messages_key="input",
+        history_messages_key="history",
+    )
+
+    session_history = get_session_history("1")
+    session_history.add_user_message(question2)
+    session_history.add_ai_message(holidays_text)
+
+    response = chain_with_history.invoke(
+        {"input": question3}, config={"configurable": {"session_id": "1"}}
+    )
+
+    result_content = response.content
+    add = "yes" in result_content.lower()
+    reason = result_content
+
+    return json.dumps({"Result": {"add": add, "reason": reason}})
 
 
 def generate_hw04(question):
@@ -162,9 +222,9 @@ def get_anniversaries(country, month, year):
 # 2
 # print(generate_hw02("2024年台灣10月紀念日有哪些"))
 # 3
-# question1 = '2024年台灣10月紀念日有哪些?'
+# question1 = "2024年台灣10月紀念日有哪些?"
 # question2 = '根據先前的節日清單，這個節日是否有在該月份清單？{"date": "10-31", "name": "蔣公誕辰紀念日"}'
 # print(generate_hw03(question1, question2))
 # 4
-# question = '請問中華台北的積分是多少?'
+# question = "請問中華台北的積分是多少?"
 # print(generate_hw04(question))
