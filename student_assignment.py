@@ -146,7 +146,7 @@ def generate_hw04(question):
     response = llm.invoke(messages)
 
     match = re.search(r"(\d+)", response.content)
-    point = match.group(1) if match else 0
+    point = int(match.group(1)) if match else 0
     return json.dumps({"Result": {"score": point}})
 
 
