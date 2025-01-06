@@ -38,7 +38,7 @@ def generate_hw01(question):
             parsed_answer = json.loads(json_content)
 
             if isinstance(parsed_answer, list):
-                return json.dumps({"Result": parsed_answer})
+                return json.dumps({"Result": [parsed_answer[0]]})
             else:
                 return json.dumps({"error": "Unexpected response format"})
         else:
