@@ -80,7 +80,7 @@ def generate_hw03(question2, question3):
         [
             (
                 "system",
-                "You are a helpful assistant. Use the conversation history to provide context-aware responses.",
+                "Answer the user's question. If the holiday is not in the given list, provide a reason and indicate whether it needs to be added. Output the result as JSON with keys 'add' (1 if the holiday needs to be added, 0 if it already exists) and 'reason' (the reason for the decision).",
             ),
             ("human", "{input}"),
         ]
@@ -107,14 +107,30 @@ def generate_hw03(question2, question3):
     session_history.add_ai_message(holidays_text)
 
     response = chain_with_history.invoke(
-        {"input": question3}, config={"configurable": {"session_id": "1"}}
+        {"input": question3, "history": session_history},
+        config={"configurable": {"session_id": "1"}},
     )
 
-    result_content = response.content
-    add = "yes" in result_content.lower()
-    reason = result_content
+    answer = response.content
+    json_start = answer.find("```json")
+    json_end = answer.rfind("```")
+    if json_start != -1 and json_end != -1:
+        json_content = answer[json_start + 7 : json_end].strip()
+        parsed_answer = json.loads(json_content)
 
-    return json.dumps({"Result": {"add": add, "reason": reason}})
+        if isinstance(parsed_answer, dict):
+            return json.dumps(
+                {
+                    "Result": {
+                        "add": bool(parsed_answer.get("add")),
+                        "reason": parsed_answer.get("reason"),
+                    }
+                }
+            )
+        else:
+            return json.dumps({"error": "Unexpected response format"})
+    else:
+        return json.dumps({"error": "JSON content not found in response"})
 
 
 def generate_hw04(question):
