@@ -12,7 +12,9 @@ from typing import Dict, List, Any
 
 gpt_chat_version = "gpt-4o"
 gpt_config = get_model_configuration(gpt_chat_version)
-calendarific_api_key = get_configuration("CALENDARIFIC_API_KEY")
+calendarific_api_key = (
+    get_configuration("CALENDARIFIC_API_KEY") or "GoVBey5KrDM8ehxPmwm5LKSG7gWYN3p0"
+)
 
 llm = AzureChatOpenAI(
     model=gpt_config["model_name"],
